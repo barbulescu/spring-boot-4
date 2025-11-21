@@ -1,11 +1,11 @@
-package dev.barbulescu.spring7
+package dev.barbulescu.sb4
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class Spring7Application
+class Main
 
 fun main(args: Array<String>) {
-	runApplication<Spring7Application>(*args)
+	runApplication<Main>(*args)
 }

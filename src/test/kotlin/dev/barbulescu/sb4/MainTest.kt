@@ -1,4 +1,4 @@
-package dev.barbulescu.spring7
+package dev.barbulescu.sb4
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Import
 
 @Import(TestcontainersConfiguration::class)
 @SpringBootTest
-class Spring7ApplicationTests {
+class MainTest {
 
 	@Test
 	fun contextLoads() {
