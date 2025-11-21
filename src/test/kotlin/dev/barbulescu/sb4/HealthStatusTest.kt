@@ -6,22 +6,50 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.context.TestConstructor.AutowireMode.ALL
+import org.springframework.test.json.JsonCompareMode.STRICT
 import org.springframework.test.web.reactive.server.WebTestClient
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@TestConstructor(autowireMode = ALL)
-@AutoConfigureWebTestClient
+@IntegrationTest
 class HealthStatusTest(val webTestClient: WebTestClient) {
 
     @Test
     fun `actuator health is ok`() {
+        val expectedBody = """
+            {
+  "components": {
+    "diskSpace": {
+      "status": "UP"
+    },
+    "livenessState": {
+      "status": "UP"
+    },
+    "ping": {
+      "status": "UP"
+    },
+    "readinessState": {
+      "status": "UP"
+    },
+    "ssl": {
+      "status": "UP"
+    },
+    "custom": {
+      "status": "UP"
+    }
+  },
+  "groups": [
+    "liveness",
+    "readiness"
+  ],
+  "status": "UP"
+}
+"""
         webTestClient.get()
             .uri("/actuator/health")
             .exchange()
             .expectStatus()
             .isOk
-            .expectBody(String::class.java)
-            .isEqualTo("""{"groups":["liveness","readiness"],"status":"UP"}""")
+            .expectBody()
+            .json(expectedBody, STRICT)
 
     }
 }
