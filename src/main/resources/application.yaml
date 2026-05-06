@@ -1,8 +1,0 @@
-spring:
-  application:
-    name: spring-boot-4
-
-management:
-  endpoint:
-    health:
-      show-components: always
