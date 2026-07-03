@@ -37,6 +37,7 @@ dependencies {
 	testImplementation("org.testcontainers:testcontainers-postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-restclient-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+	testImplementation("org.wiremock:wiremock-jetty12:3.13.0")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -44,6 +45,15 @@ dependencies {
 kotlin {
 	compilerOptions {
 		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
+	}
+}
+
+configurations.matching { it.name.startsWith("test") }.configureEach {
+	resolutionStrategy.eachDependency {
+		if (requested.group.startsWith("org.eclipse.jetty")) {
+			useVersion("12.0.16")
+			because("WireMock 3.13 requires Jetty 12.0.x API (Environment.ensure removed in 12.1.x)")
+		}
 	}
 }
 
