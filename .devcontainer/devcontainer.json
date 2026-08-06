@@ -1,0 +1,19 @@
+{
+  "name": "spring-boot-4",
+  "image": "REGISTRY_HOST/devcontainers/java:1-25",
+  "mounts": [
+    "source=${localEnv:XDG_RUNTIME_DIR}/podman/podman.sock,target=/var/run/docker.sock,type=bind"
+  ],
+  "containerEnv": {
+    "TESTCONTAINERS_RYUK_DISABLED": "true",
+    "TESTCONTAINERS_HOST_OVERRIDE": "host.containers.internal"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vmware.vscode-spring-boot",
+        "redhat.java"
+      ]
+    }
+  }
+}

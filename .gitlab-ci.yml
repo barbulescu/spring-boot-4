@@ -1,0 +1,40 @@
+# dind is intentionally disabled/unused. Postgres is provided via GitLab's
+# `services:` keyword instead, and Spring Boot's relaxed env-var binding
+# (SPRING_DATASOURCE_URL/USERNAME/PASSWORD) overrides the `jdbc:tc:` URL in
+# src/test/resources/application.yaml at higher precedence, so TestContainers
+# is never invoked in CI -- no privileged mode / /dev/fuse / dind needed.
+#
+# Before use: replace REGISTRY_HOST below with your registry hostname[:port].
+# Assumes the registry passthrough-mirrors Docker Hub's `library/*` namespace;
+# adjust the path segment if your registry uses a different convention.
+# If the registry requires auth, set the DOCKER_AUTH_CONFIG CI/CD variable --
+# it covers both `image:` and `services:` pulls, no YAML change needed.
+
+variables:
+  POSTGRES_DB: "test-db"
+  POSTGRES_USER: "test"
+  POSTGRES_PASSWORD: "test"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/test-db"
+  SPRING_DATASOURCE_USERNAME: "test"
+  SPRING_DATASOURCE_PASSWORD: "test"
+  GRADLE_USER_HOME: "${CI_PROJECT_DIR}/.gradle"
+
+test:
+  image: REGISTRY_HOST/library/eclipse-temurin:25-jdk-noble
+  services:
+    - name: REGISTRY_HOST/library/postgres:16-alpine
+      alias: postgres
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+  script:
+    - ./gradlew --no-daemon test
+  artifacts:
+    when: always
+    reports:
+      junit: build/test-results/test/*.xml
+    paths:
+      - build/reports/tests
+    expire_in: 1 week

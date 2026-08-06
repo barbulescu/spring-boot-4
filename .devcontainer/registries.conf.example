@@ -1,0 +1,31 @@
+# Podman registry-mirror configuration.
+#
+# This is machine/user-level config -- Podman has no project-scoped
+# equivalent, so this file is a template to copy, not something auto-applied
+# by opening this repo.
+#
+# Why this is needed in addition to REGISTRY_HOST in devcontainer.json:
+# TestContainers resolves the Postgres image internally from the
+# `jdbc:tc:postgresql:16-alpine` URL in src/test/resources/application.yaml --
+# there is no image string in this repo you can rewrite for that pull. This
+# mirror config transparently redirects ALL podman pulls (including that
+# implicit one) through REGISTRY_HOST, without touching any file.
+#
+# Install (rootless, recommended -- uses a drop-in so it won't clobber any
+# existing registries.conf you may already have):
+#   mkdir -p ~/.config/containers/registries.conf.d
+#   cp .devcontainer/registries.conf.example \
+#      ~/.config/containers/registries.conf.d/spring-boot-4-mirror.conf
+#   # then edit the copy and replace REGISTRY_HOST below with your real hostname[:port]
+#
+# Verify with: podman info --format '{{.Registries}}'   (or: podman info | grep -A5 registries)
+
+[[registry]]
+location = "docker.io"
+[[registry.mirror]]
+location = "REGISTRY_HOST"
+
+[[registry]]
+location = "mcr.microsoft.com"
+[[registry.mirror]]
+location = "REGISTRY_HOST"
